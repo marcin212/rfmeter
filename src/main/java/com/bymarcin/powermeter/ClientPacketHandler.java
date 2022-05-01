@@ -10,8 +10,7 @@ public class ClientPacketHandler {
         if (level == null) return;
         var entity = level.getBlockEntity(packet.getPos());
         if (entity instanceof RfMeterBlockEntity tile) {
-            tile.lastFlowValue = packet.getLastFlowValue();
-            tile.value = packet.getValue();
+            tile.logic.onPacket(packet.getValue(), packet.getLastFlowValue(), packet.getInCounterMode());
         }
     }
 }

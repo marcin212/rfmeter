@@ -54,19 +54,17 @@ public class RfMeterRenderer implements BlockEntityRenderer<RfMeterBlockEntity> 
         stack.translate(-0.5f, -0.5f, -0.5);
         VertexConsumer vertex = bufferSource.getBuffer(RenderType.solid());
 
-        long number = blockEntity.getFlowValue();
-        long number2 = blockEntity.getValue();
-        RfMeterMod.LOGGER.debug("number1:" + String.valueOf(number));
-        RfMeterMod.LOGGER.debug("number2:" + String.valueOf(number2));
+        long number = blockEntity.logic.getTransfer();
+        long number2 = blockEntity.logic.getCurrentValue();
 
         stack.pushPose();
         stack.translate(4/16f, 9.25/16f, 3/16f - 0.001f);
-        renderNumber(number, true, stack, vertex, light, overlay);
+        renderNumber(number2, true, stack, vertex, light, overlay);
         stack.popPose();
 
         stack.pushPose();
         stack.translate(4/16f, 12.25/16f, 3/16f - 0.001f);
-        renderNumber(number2, true, stack, vertex, light, overlay);
+        renderNumber(number, true, stack, vertex, light, overlay);
         stack.popPose();
 
         stack.popPose();

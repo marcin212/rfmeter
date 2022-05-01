@@ -43,30 +43,33 @@ public class PacketHandler {
 
     public static class ClientSyncPacket {
         private BlockPos pos;
-        private long lastFlowValue;
+        private int lastFlowValue;
         private long value;
+        private Boolean inCounterMode;
 
 
         public ClientSyncPacket() {
         }
-
-        public ClientSyncPacket(BlockPos pos, long lastFlowValue, long value) {
+        public ClientSyncPacket(BlockPos pos, int lastFlowValue, long value, boolean inCounterMode) {
             this.pos = pos;
             this.lastFlowValue = lastFlowValue;
             this.value = value;
+            this.inCounterMode = inCounterMode;
         }
 
         public void encode(FriendlyByteBuf buffer) {
             buffer.writeBlockPos(pos);
-            buffer.writeLong(lastFlowValue);
+            buffer.writeInt(lastFlowValue);
             buffer.writeLong(value);
+            buffer.writeBoolean(inCounterMode);
         }
 
         public static ClientSyncPacket decode(FriendlyByteBuf buffer) {
             var packet = new ClientSyncPacket();
             packet.pos = buffer.readBlockPos();
-            packet.lastFlowValue = buffer.readLong();
+            packet.lastFlowValue = buffer.readInt();
             packet.value = buffer.readLong();
+            packet.inCounterMode = buffer.readBoolean();
             return packet;
         }
 
@@ -75,11 +78,15 @@ public class PacketHandler {
             context.get().setPacketHandled(true);
         }
 
+        public Boolean getInCounterMode() {
+            return inCounterMode;
+        }
+
         public BlockPos getPos() {
             return pos;
         }
 
-        public long getLastFlowValue() {
+        public int getLastFlowValue() {
             return lastFlowValue;
         }
 
