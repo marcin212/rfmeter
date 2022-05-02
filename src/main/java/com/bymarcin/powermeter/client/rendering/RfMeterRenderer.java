@@ -16,7 +16,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Con
 public class RfMeterRenderer implements BlockEntityRenderer<RfMeterBlockEntity> {
 
     public RfMeterRenderer(Context context) {
-
     }
 
     public void renderNumber(long number, boolean dot, PoseStack poseStack, VertexConsumer vertexConsumer, int light, int overlay) {
@@ -35,6 +34,12 @@ public class RfMeterRenderer implements BlockEntityRenderer<RfMeterBlockEntity> 
                 //TODO dot offset
             }
         }
+        poseStack.popPose();
+    }
+
+    public void renderUnitMultiplication(SI letter, PoseStack poseStack, VertexConsumer vertexConsumer, int light, int overlay) {
+        poseStack.pushPose();
+        Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(poseStack.last(), vertexConsumer, null, ClientSetup.MODEL_MAP.get(ClientSetup.SI_TO_RL[letter.ordinal()]), 0f, 1f, 0f, light, overlay);
         poseStack.popPose();
     }
 
@@ -58,13 +63,18 @@ public class RfMeterRenderer implements BlockEntityRenderer<RfMeterBlockEntity> 
         long number2 = blockEntity.logic.getCurrentValue();
 
         stack.pushPose();
-        stack.translate(4/16f, 9.25/16f, 3/16f - 0.001f);
+        stack.translate(4/16f, 12.25/16f, 3/16f - 0.001f);
+        renderNumber(number, true, stack, vertex, light, overlay);
+        stack.popPose();
+
+        stack.pushPose();
+        stack.translate(4/16f, 9.5/16f, 3/16f - 0.001f);
         renderNumber(number2, true, stack, vertex, light, overlay);
         stack.popPose();
 
         stack.pushPose();
-        stack.translate(4/16f, 12.25/16f, 3/16f - 0.001f);
-        renderNumber(number, true, stack, vertex, light, overlay);
+        stack.translate(4/16f, 8.25/16f, 3/16f - 0.001f);
+        renderUnitMultiplication(SI.K, stack, vertex, light, overlay);
         stack.popPose();
 
         stack.popPose();
@@ -72,11 +82,11 @@ public class RfMeterRenderer implements BlockEntityRenderer<RfMeterBlockEntity> 
 
 
     enum SI {
-        P(50, 40),
-        T(44, 40),
-        G(38, 40),
-        M(32, 40),
         K(26, 40),
+        M(32, 40),
+        G(38, 40),
+        T(44, 40),
+        P(50, 40),
         none(0, 0);
         int x, y, width, height;
         public static final SI[] reverse = valuesReverse();
