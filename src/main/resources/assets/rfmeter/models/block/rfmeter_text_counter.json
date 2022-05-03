@@ -1,0 +1,47 @@
+{
+  "elements": [
+    {
+      "__comment": "text c",
+      "from": [2.125, 0, 0],
+      "to": [2.5, 0.75, 0],
+      "faces": {
+        "north": {"uv": [7.25, 11.75, 8.75, 14], "texture": "#all", "tintindex": 0}
+      }
+    },
+    {
+      "__comment": "text o",
+      "from": [1.75, 0, 0],
+      "to": [2.125, 0.75, 0],
+      "faces": {
+        "north": {"uv": [1.5, 9.75, 3, 12], "texture": "#all", "tintindex": 0}
+      }
+    },
+    {
+      "__comment": "text u",
+      "from": [1.375, 0, 0],
+      "to": [1.75, 0.75, 0],
+      "faces": {
+        "north": {"uv": [8.75, 11.75, 10.25, 14], "texture": "#all", "tintindex": 0}
+      }
+    },
+    {
+      "__comment": "text n",
+      "from": [1, 0, 0],
+      "to": [1.375, 0.75, 0],
+      "faces": {
+        "north": {"uv": [8.5, 12.25, 10, 14.5], "texture": "#all", "tintindex": 0, "rotation": 180}
+      }
+    },
+    {
+      "__comment": "text ter",
+      "from": [0, 0, 0],
+      "to": [1, 0.75, 0],
+      "faces": {
+        "north": {"uv": [10.25, 11.75, 14.25, 14], "texture": "#all", "tintindex": 0}
+      }
+    }
+  ],
+  "textures": {
+    "all": "rfmeter:blocks/rfmeter"
+  }
+}

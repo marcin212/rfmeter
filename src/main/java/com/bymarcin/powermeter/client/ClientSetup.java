@@ -37,6 +37,9 @@ public class ClientSetup {
     public static final ResourceLocation RF_METER_LETTER_G_MODEL_RL = new ResourceLocation("rfmeter:block/rfmeter_letter_g");
     public static final ResourceLocation RF_METER_LETTER_T_MODEL_RL = new ResourceLocation("rfmeter:block/rfmeter_letter_t");
     public static final ResourceLocation RF_METER_LETTER_P_MODEL_RL = new ResourceLocation("rfmeter:block/rfmeter_letter_p");
+    public static final ResourceLocation RF_METER_TEXT_VOID_MODEL_RL = new ResourceLocation("rfmeter:block/rfmeter_text_void");
+    public static final ResourceLocation RF_METER_TEXT_COUNTER_MODEL_RL = new ResourceLocation("rfmeter:block/rfmeter_text_counter");
+    public static final ResourceLocation RF_METER_TEXT_PREPAID_MODEL_RL = new ResourceLocation("rfmeter:block/rfmeter_text_prepaid");
 
     public static final ResourceLocation[] DIGIT_TO_RL = new ResourceLocation[] {
             RF_METER_DIGIT_0_MODEL_RL,
@@ -59,6 +62,12 @@ public class ClientSetup {
             RF_METER_LETTER_P_MODEL_RL
     };
 
+    public static final ResourceLocation[] TEXT_TO_RL = new ResourceLocation[] {
+            RF_METER_TEXT_VOID_MODEL_RL,
+            RF_METER_TEXT_COUNTER_MODEL_RL,
+            RF_METER_TEXT_PREPAID_MODEL_RL
+    };
+
     @SubscribeEvent
     public static void init(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
@@ -73,6 +82,9 @@ public class ClientSetup {
             loadModel(e, rl);
         }
         for(ResourceLocation rl : SI_TO_RL) {
+            loadModel(e, rl);
+        }
+        for(ResourceLocation rl : TEXT_TO_RL) {
             loadModel(e, rl);
         }
     }

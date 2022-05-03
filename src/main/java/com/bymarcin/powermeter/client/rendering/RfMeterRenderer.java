@@ -1,6 +1,5 @@
 package com.bymarcin.powermeter.client.rendering;
 
-import com.bymarcin.powermeter.RfMeterMod;
 import com.bymarcin.powermeter.blockentity.RfMeterBlockEntity;
 import com.bymarcin.powermeter.blocks.RfMeterBlock;
 import com.bymarcin.powermeter.client.ClientSetup;
@@ -43,6 +42,12 @@ public class RfMeterRenderer implements BlockEntityRenderer<RfMeterBlockEntity> 
         poseStack.popPose();
     }
 
+    public void renderText(Text text, Status status, PoseStack poseStack, VertexConsumer vertexConsumer, int light, int overlay) {
+        poseStack.pushPose();
+        Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(poseStack.last(), vertexConsumer, null, ClientSetup.MODEL_MAP.get(ClientSetup.TEXT_TO_RL[text.ordinal()]), status.r, status.g, status.b, light, overlay);
+        poseStack.popPose();
+    }
+
     @Override
     public void render(RfMeterBlockEntity blockEntity, float partial, PoseStack stack, MultiBufferSource bufferSource, int light, int overlay) {
         stack.pushPose();
@@ -77,9 +82,43 @@ public class RfMeterRenderer implements BlockEntityRenderer<RfMeterBlockEntity> 
         renderUnitMultiplication(SI.K, stack, vertex, light, overlay);
         stack.popPose();
 
+        // void, counter, prepaid texts
+        stack.pushPose();
+        stack.translate(10.5/16f, 8.25/16f, 3/16f - 0.001f);
+        renderText(Text.Void, Status.OFF, stack, vertex, light, overlay);
+        stack.popPose();
+        stack.pushPose();
+        stack.translate(7.7/16f, 8.25/16f, 3/16f - 0.001f);
+        renderText(Text.Counter, Status.ON, stack, vertex, light, overlay);
+        stack.popPose();
+        stack.pushPose();
+        stack.translate(5/16f, 8.25/16f, 3/16f - 0.001f);
+        renderText(Text.Prepaid, Status.ALMOST_EXPIRED, stack, vertex, light, overlay);
+        stack.popPose();
+
         stack.popPose();
     }
 
+    enum Text {
+        Void,
+        Counter,
+        Prepaid
+    }
+
+    enum Status {
+        OFF(.41f, .41f, .41f),
+        ON(0, 1f, 0),
+        ALMOST_EXPIRED(1f, .84f, 0),
+        EXPIRED(1f, 0, 0);
+
+        float r, g, b;
+
+        Status(float r, float g, float b) {
+            this.r = r;
+            this.g = g;
+            this.b = b;
+        }
+    }
 
     enum SI {
         K(26, 40),
