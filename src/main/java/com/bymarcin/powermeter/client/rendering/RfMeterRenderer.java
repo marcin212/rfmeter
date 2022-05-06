@@ -1,5 +1,7 @@
 package com.bymarcin.powermeter.client.rendering;
 
+import com.bymarcin.powermeter.RfMeterLogic;
+import com.bymarcin.powermeter.RfMeterMod;
 import com.bymarcin.powermeter.blockentity.RfMeterBlockEntity;
 import com.bymarcin.powermeter.blocks.RfMeterBlock;
 import com.bymarcin.powermeter.client.ClientSetup;
@@ -15,15 +17,16 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Con
 public class RfMeterRenderer implements BlockEntityRenderer<RfMeterBlockEntity> {
 
     public RfMeterRenderer(Context context) {
+
     }
 
-    public void renderNumber(long number, boolean dot, PoseStack poseStack, VertexConsumer vertexConsumer, int light, int overlay) {
+    public void renderNumber(long number, boolean dot, PoseStack poseStack, VertexConsumer vertexConsumer, int light, int overlay, RfMeterLogic.RgbColor color) {
         poseStack.pushPose();
         float numberOffset = 0.75f;
         for(int i=0;number != 0 || i<(dot?1:2);number = number/10,i++){
             int dig = (int) (number%10);
 
-            Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(poseStack.last(), vertexConsumer, null, ClientSetup.MODEL_MAP.get(ClientSetup.DIGIT_TO_RL[dig]), 0f, 1f, 0f, light, overlay);
+            Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(poseStack.last(), vertexConsumer, null, ClientSetup.MODEL_MAP.get(ClientSetup.DIGIT_TO_RL[dig]), color.r, color.g, color.b, light, overlay);
             poseStack.translate(numberOffset / 16f, 0f, 0f);
 
             if(i==0) {
@@ -66,15 +69,16 @@ public class RfMeterRenderer implements BlockEntityRenderer<RfMeterBlockEntity> 
 
         long number = blockEntity.logic.getTransfer();
         long number2 = blockEntity.logic.getCurrentValue();
+        RfMeterLogic.RgbColor color = blockEntity.logic.getColor();
 
         stack.pushPose();
         stack.translate(4/16f, 12.25/16f, 3/16f - 0.001f);
-        renderNumber(number, true, stack, vertex, light, overlay);
+        renderNumber(number, true, stack, vertex, light, overlay, color);
         stack.popPose();
 
         stack.pushPose();
         stack.translate(4/16f, 9.5/16f, 3/16f - 0.001f);
-        renderNumber(number2, true, stack, vertex, light, overlay);
+        renderNumber(number2, true, stack, vertex, light, overlay, color);
         stack.popPose();
 
         stack.pushPose();

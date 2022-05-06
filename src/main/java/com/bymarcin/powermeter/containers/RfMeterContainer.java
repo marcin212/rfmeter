@@ -1,5 +1,6 @@
 package com.bymarcin.powermeter.containers;
 
+import com.bymarcin.powermeter.blockentity.RfMeterBlockEntity;
 import com.bymarcin.powermeter.registry.RfMeterBlocks;
 import com.bymarcin.powermeter.registry.RfMeterContainers;
 import net.minecraft.core.BlockPos;
@@ -14,11 +15,19 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.Nullable;
 
 public class RfMeterContainer extends AbstractContainerMenu {
-    private final BlockEntity entity;
+    private final RfMeterBlockEntity entity;
 
     public RfMeterContainer(int windowId, BlockPos pos, Inventory playerInventory, Player player) {
         super(RfMeterContainers.RF_METER.get(), windowId);
-        this.entity = player.getCommandSenderWorld().getBlockEntity(pos);
+        if(player.getCommandSenderWorld().getBlockEntity(pos) instanceof RfMeterBlockEntity entity) {
+            this.entity = entity;
+        } else {
+            this.entity = null;
+        }
+    }
+
+    public RfMeterBlockEntity getEntity() {
+        return entity;
     }
 
     @Override

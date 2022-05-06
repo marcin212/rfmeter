@@ -17,9 +17,9 @@ import org.jetbrains.annotations.Nullable;
 public class RfMeterLogic {
 
     public class RgbColor {
-        public final float r;
-        public final float g;
-        public final float b;
+        public float r;
+        public float g;
+        public float b;
 
         public RgbColor(CompoundTag tag) {
             this(getOrDefault(tag, "r", DyeColor.LIME.getTextureDiffuseColors()[0]),
@@ -136,6 +136,10 @@ public class RfMeterLogic {
             }
         }
         return LazyOptional.empty();
+    }
+
+    public RgbColor getColor() {
+        return color;
     }
 
     protected boolean canConnectEnergy(Direction from, boolean receive) {
