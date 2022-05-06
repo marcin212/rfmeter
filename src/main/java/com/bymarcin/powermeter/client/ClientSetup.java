@@ -32,6 +32,7 @@ public class ClientSetup {
     public static final ResourceLocation RF_METER_DIGIT_7_MODEL_RL = new ResourceLocation("rfmeter:block/rfmeter_digit_7");
     public static final ResourceLocation RF_METER_DIGIT_8_MODEL_RL = new ResourceLocation("rfmeter:block/rfmeter_digit_8");
     public static final ResourceLocation RF_METER_DIGIT_9_MODEL_RL = new ResourceLocation("rfmeter:block/rfmeter_digit_9");
+    public static final ResourceLocation RF_METER_DOT_MODEL_RL = new ResourceLocation("rfmeter:block/rfmeter_dot");
     public static final ResourceLocation RF_METER_LETTER_K_MODEL_RL = new ResourceLocation("rfmeter:block/rfmeter_letter_k");
     public static final ResourceLocation RF_METER_LETTER_M_MODEL_RL = new ResourceLocation("rfmeter:block/rfmeter_letter_m");
     public static final ResourceLocation RF_METER_LETTER_G_MODEL_RL = new ResourceLocation("rfmeter:block/rfmeter_letter_g");
@@ -87,6 +88,7 @@ public class ClientSetup {
         for(ResourceLocation rl : TEXT_TO_RL) {
             loadModel(e, rl);
         }
+        loadModel(e, RF_METER_DOT_MODEL_RL);
     }
 
     private static void loadModel(ModelBakeEvent e, ResourceLocation rl) {

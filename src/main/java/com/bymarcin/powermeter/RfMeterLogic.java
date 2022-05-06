@@ -126,6 +126,10 @@ public class RfMeterLogic {
         }
     }
 
+    public boolean isInCounterMode() {
+        return inCounterMode;
+    }
+
     @NotNull
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
         if (CapabilityEnergy.ENERGY.equals(cap)) {

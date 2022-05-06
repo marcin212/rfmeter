@@ -1,0 +1,15 @@
+{
+  "elements": [
+    {
+      "__comment": "dot",
+      "from": [0, 0, 0],
+      "to": [0.125, 0.25, 0],
+      "faces": {
+        "north": {"uv": [15, 2.25, 15.25, 2.75], "texture": "#all", "tintindex": 0}
+      }
+    }
+  ],
+  "textures": {
+    "all": "rfmeter:blocks/rfmeter"
+  }
+}
