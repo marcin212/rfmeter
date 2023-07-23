@@ -116,7 +116,7 @@ public class RfMeterBlock extends Block implements EntityBlock {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof RfMeterBlockEntity) {
                 MenuProvider menuProvider = RfMeterContainer.createMenuProvider(pos);
-                NetworkHooks.openGui((ServerPlayer) player, menuProvider, pos);
+                NetworkHooks.openScreen((ServerPlayer) player, menuProvider, pos);
             } else {
                 throw new IllegalStateException("Invalid block entity type!");
             }

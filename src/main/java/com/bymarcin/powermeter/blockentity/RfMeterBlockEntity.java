@@ -33,7 +33,7 @@ public class RfMeterBlockEntity extends BlockEntity {
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
+    public @NotNull CompoundTag getUpdateTag() {
         CompoundTag tag = super.getUpdateTag();
         logic.getUpdateTag(tag);
         return tag;

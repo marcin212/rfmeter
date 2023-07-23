@@ -3,12 +3,16 @@ package com.bymarcin.powermeter;
 
 import com.bymarcin.powermeter.blockentity.RfMeterBlockEntity;
 import com.bymarcin.powermeter.blocks.RfMeterBlock;
+import com.bymarcin.powermeter.network.PacketHandler;
+import com.bymarcin.powermeter.network.RfMeterSyncC2SPacket;
+import com.bymarcin.powermeter.network.RfMeterSyncPacket;
+import com.bymarcin.powermeter.network.RfMeterSyncS2CPacket;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.DyeColor;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
@@ -16,15 +20,20 @@ import org.jetbrains.annotations.Nullable;
 
 public class RfMeterLogic {
 
-    public class RgbColor {
+    public static class DisplayColor {
+        public float contrast;
         public float r;
         public float g;
         public float b;
-
-        public RgbColor(CompoundTag tag) {
-            this(getOrDefault(tag, "r", DyeColor.LIME.getTextureDiffuseColors()[0]),
-                    getOrDefault(tag, "g", DyeColor.LIME.getTextureDiffuseColors()[1]),
-                    getOrDefault(tag, "b", DyeColor.LIME.getTextureDiffuseColors()[2]));
+        private static final float[] defaultColor = DyeColor.LIME.getTextureDiffuseColors();
+        public DisplayColor() {
+            this(defaultColor[0], defaultColor[1], defaultColor[2], 0.2f);
+        }
+        public DisplayColor(CompoundTag tag) {
+            this(getOrDefault(tag, "r", defaultColor[0]),
+                    getOrDefault(tag, "g", defaultColor[1]),
+                    getOrDefault(tag, "b", defaultColor[2]),
+                    getOrDefault(tag, "contrast", 0.2f));
         }
 
         private static float getOrDefault(CompoundTag tag, String color, float defaultColor) {
@@ -34,18 +43,11 @@ public class RfMeterLogic {
             return defaultColor;
         }
 
-        public RgbColor(float r, float g, float b) {
+        public DisplayColor(float r, float g, float b, float contrast) {
             this.r = r;
             this.g = g;
             this.b = b;
-        }
-
-        public RgbColor(float[] color) {
-            this(color[0], color[1], color[2]);
-        }
-
-        public RgbColor(DyeColor dyeColor) {
-            this(dyeColor.getTextureDiffuseColors());
+            this.contrast = contrast;
         }
 
         public CompoundTag save() {
@@ -53,15 +55,16 @@ public class RfMeterLogic {
             tag.putFloat("r", r);
             tag.putFloat("g", g);
             tag.putFloat("b", b);
+            tag.putFloat("contrast", contrast);
             return tag;
         }
     }
     int transfer = 0;//curent flow in RF/t
     int transferLimit = -1;
     long value = 0;//current used energy
+    long prepaidValue = 0;
     long lastValue = 0;
     Avg avg = new Avg();
-    String name = "";
     String password = "";
     boolean inCounterMode = true;
     boolean isOn = true;
@@ -70,7 +73,7 @@ public class RfMeterLogic {
 
     int tick = 0;
 
-    public RgbColor color = new RgbColor(DyeColor.LIME);
+    public DisplayColor color = new DisplayColor();
     ForgeEnergy up;
     ForgeEnergy down;
     LazyOptional<ForgeEnergy> energyStorageUp;
@@ -86,7 +89,7 @@ public class RfMeterLogic {
         energyStorageDown = LazyOptional.of(()->down);
     }
 
-    class ForgeEnergy implements IEnergyStorage {
+    static class ForgeEnergy implements IEnergyStorage {
         RfMeterLogic rfMeterLogic;
         Direction face;
 
@@ -130,9 +133,13 @@ public class RfMeterLogic {
         return inCounterMode;
     }
 
+    public void setCounterMod(Boolean inCounterMode) {
+        this.inCounterMode = inCounterMode;
+    }
+
     @NotNull
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        if (CapabilityEnergy.ENERGY.equals(cap)) {
+        if (ForgeCapabilities.ENERGY.equals(cap)) {
             if (side == Direction.UP) {
                 return energyStorageUp.cast();
             } else if (side == Direction.DOWN) {
@@ -142,7 +149,7 @@ public class RfMeterLogic {
         return LazyOptional.empty();
     }
 
-    public RgbColor getColor() {
+    public DisplayColor getColor() {
         return color;
     }
 
@@ -160,6 +167,14 @@ public class RfMeterLogic {
 
     public boolean isInverted() {
         return entity.getBlockState().getValue(RfMeterBlock.FLOW_DIRECTION) == RfMeterBlock.FlowDirection.DOWN_UP;
+    }
+
+    public void setTransferLimit(int transferLimit) {
+        this.transferLimit = transferLimit;
+    }
+
+    public int getTransferLimit() {
+        return transferLimit;
     }
 
     public int getTransfer() {
@@ -184,8 +199,16 @@ public class RfMeterLogic {
         return !isProtected || (pass != null && MathUtils.encryptPassword(pass).equals(password));
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public boolean isProtected() {
+        return isProtected;
+    }
+
     public boolean canEnergyFlow() {
-        return isOn && (inCounterMode || (0 < value)) && !redstone;
+        return isOn && (inCounterMode || (0 < calculatedPrepaid())) && !redstone;
     }
 
     private int checkRedstone(){
@@ -201,18 +224,76 @@ public class RfMeterLogic {
     }
 
 
-    public void onPacket(long value, int transfer, boolean inCounterMode) {
-        this.value = value;
-        this.transfer = transfer;
-        this.inCounterMode = inCounterMode;
+    public void onRfMeterSyncPacket(RfMeterSyncPacket packet) {
+
+        if(RfMeterSyncPacket.ContentFlag.COLOR.hasFlag(packet.flags)) {
+            color = new DisplayColor(packet.r, packet.g, packet.b, packet.contrast);
+        }
+
+        if(RfMeterSyncPacket.ContentFlag.VALUE.hasFlag(packet.flags)) {
+            value = packet.value;
+        }
+
+        if(RfMeterSyncPacket.ContentFlag.TRANSFER_LIMIT.hasFlag(packet.flags)) {
+            transferLimit = packet.transferLimit;
+        }
+
+        if(RfMeterSyncPacket.ContentFlag.PASSWORD.hasFlag(packet.flags)) {
+            password = packet.password;
+            isProtected = packet.isProtected;
+        }
+
+        if(RfMeterSyncPacket.ContentFlag.COUNTER_MODE.hasFlag(packet.flags)) {
+            setCounterMod(packet.inCounterMode);
+        }
+
+        if(RfMeterSyncPacket.ContentFlag.ON.hasFlag(packet.flags)) {
+            isOn = packet.isOn;
+        }
+
+        if(RfMeterSyncPacket.ContentFlag.TRANSFER.hasFlag(packet.flags)) {
+            transfer = packet.transfer;
+        }
+
+        if(RfMeterSyncPacket.ContentFlag.PREPAID_VALUE.hasFlag(packet.flags)) {
+            prepaidValue = packet.prepaidValue;
+        }
+
+        if(entity.hasLevel() && !entity.getLevel().isClientSide) {
+            PacketHandler.CHANNEL.send(PacketDistributor.TRACKING_CHUNK.with(()-> entity.getLevel().getChunkAt(entity.getBlockPos())), ((RfMeterSyncC2SPacket) packet).convert());
+        }
     }
 
+    public boolean isOn() {
+        return isOn;
+    }
+
+    public long calculatedPrepaid() {
+        return Math.max(0L, prepaidValue - value);
+    }
+
+    public void addTopUp(long value) {
+        prepaidValue += value;
+    }
+
+    public void subTopUp(long value) {
+        prepaidValue = Math.max(0, prepaidValue - value);
+    }
+
+    public long getPrepaidValue() {
+        return prepaidValue;
+    }
 
     public void serverTick() {
         tick++;
         if (tick % 20 == 0) {
-            var packet = new PacketHandler.ClientSyncPacket(entity.getBlockPos(), transfer, value, inCounterMode);
-            PacketHandler.CHANNEL.send(PacketDistributor.TRACKING_CHUNK.with(()-> entity.getLevel().getChunkAt(entity.getBlockPos())), packet);
+            var packet = new RfMeterSyncPacket.Builder<>(entity.getBlockPos(), RfMeterSyncS2CPacket.class)
+                    .addTransfer(transfer)
+                    .addValue(value)
+                    .addPrepaidValue(prepaidValue)
+                    .addCounterMode(inCounterMode)
+                    .build();
+                PacketHandler.CHANNEL.send(PacketDistributor.TRACKING_CHUNK.with(() -> entity.getLevel().getChunkAt(entity.getBlockPos())), packet);
             tick = 0;
         }
         long lastRecive = Math.abs(value - lastValue);
@@ -223,16 +304,13 @@ public class RfMeterLogic {
 
     public void clientTick() {
         tick++;
-        if (inCounterMode)
-            value += transfer;
-        else
-            value -= transfer;
+        value += transfer;
     }
 
     public IEnergyStorage getEnergyStorage(Direction direction){
         var energyEntity = entity.getLevel().getBlockEntity(entity.getBlockPos().relative(direction));
         if(energyEntity == null) return null;
-        var capability = energyEntity.getCapability(CapabilityEnergy.ENERGY, direction.getOpposite());
+        var capability = energyEntity.getCapability(ForgeCapabilities.ENERGY, direction.getOpposite());
         if(capability.isPresent()) {
             return capability.orElse(null);
         }
@@ -241,17 +319,15 @@ public class RfMeterLogic {
 
     protected int receiveEnergy(Direction from, int maxReceive, boolean simulate) {
         if (!canEnergyFlow()) return 0;
-        int temp = 0;
         if (from == (isInverted() ? Direction.DOWN : Direction.UP)) {
             IEnergyStorage storage = getEnergyStorage(isInverted() ? Direction.UP : Direction.DOWN);
             if(storage!=null){
-                temp = storage.receiveEnergy(transferLimit == -1 ?
-                                (inCounterMode ? maxReceive : Math.min((int) value, maxReceive))
-                                : Math.min(transferLimit, (inCounterMode ? maxReceive : Math.min((int) value, maxReceive)))
+                int temp = storage.receiveEnergy(transferLimit == -1 ?
+                                (inCounterMode ? maxReceive : Math.min(MathUtils.fromLong(calculatedPrepaid()), maxReceive))
+                                : Math.min(transferLimit, (inCounterMode ? maxReceive : Math.min(MathUtils.fromLong(calculatedPrepaid()), maxReceive)))
                         , simulate);
 
-                if (!simulate) if (inCounterMode) value += temp;
-                else value -= temp;
+                if (!simulate) value += temp;
                 return temp;
             }
         }
@@ -266,9 +342,9 @@ public class RfMeterLogic {
         nbt.putInt("transferLimit", transferLimit);
 
         nbt.putLong("value", value);
+        nbt.putLong("prepaidValue", prepaidValue);
         nbt.putLong("lastValue", lastValue);
 
-        nbt.putString("name", name);
         nbt.putString("password", password);
 
         nbt.putBoolean("inCounterMode", inCounterMode);
@@ -287,8 +363,6 @@ public class RfMeterLogic {
             value = nbt.getLong("value");
         if (nbt.contains("lastValue"))
             lastValue = nbt.getLong("lastValue");
-        if (nbt.contains("name"))
-            name = nbt.getString("name");
         if (nbt.contains("password"))
             password = nbt.getString("password");
         if (nbt.contains("inCounterMode"))
@@ -298,10 +372,11 @@ public class RfMeterLogic {
         if (nbt.contains("isProtected"))
             isProtected = nbt.getBoolean("isProtected");
         if (nbt.contains("color"))
-            color = new RgbColor(nbt.getCompound("color"));
-        if(nbt.contains("redstone")){
+            color = new DisplayColor(nbt.getCompound("color"));
+        if(nbt.contains("redstone"))
             redstone = nbt.getBoolean("redstone");
-        }
+        if(nbt.contains("prepaidValue"))
+            prepaidValue = nbt.getLong("prepaidValue");
     }
 
     public void saveAdditional(CompoundTag nbt) {
@@ -309,9 +384,9 @@ public class RfMeterLogic {
         nbt.putInt("transferLimit", transferLimit);
 
         nbt.putLong("value", value);
+        nbt.putLong("prepaidValue", prepaidValue);
         nbt.putLong("lastValue", lastValue);
 
-        nbt.putString("name", name);
         nbt.putString("password", password);
 
         nbt.putBoolean("inCounterMode", inCounterMode);
@@ -334,8 +409,6 @@ public class RfMeterLogic {
             value = nbt.getLong("value");
         if (nbt.contains("lastValue"))
             lastValue = nbt.getLong("lastValue");
-        if (nbt.contains("name"))
-            name = nbt.getString("name");
         if (nbt.contains("password"))
             password = nbt.getString("password");
         if (nbt.contains("inCounterMode"))
@@ -347,9 +420,11 @@ public class RfMeterLogic {
         if (nbt.contains("tick"))
             tick = nbt.getInt("tick");
         if (nbt.contains("color"))
-            color = new RgbColor(nbt.getCompound("color"));
+            color = new DisplayColor(nbt.getCompound("color"));
         if(nbt.contains("redstone"))
             redstone = nbt.getBoolean("redstone");
+        if(nbt.contains("prepaidValue"))
+            prepaidValue = nbt.getLong("prepaidValue");
     }
 
     public class Avg {

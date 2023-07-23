@@ -39,4 +39,30 @@ public class MathUtils {
         return result;
 
     }
+
+    public static int toBGRA(float red, float green, float blue, float alfa) {
+        int r = (int) (red * 255);
+        int g = (int) (green * 255);
+        int b = (int) (blue * 255);
+        int a = (int) (alfa * 255);
+        return b + ((g&255) << 8) + ((r&255) << 16) + ((a&255) << 24);
+    }
+
+    public static int toRGB(float red, float green, float blue) {
+        int r = (int) (red * 255);
+        int g = (int) (green * 255);
+        int b = (int) (blue * 255);
+        return b + ((g&255) << 8) + ((r&255) << 16);
+    }
+
+    public static int toBGRA(float red, float green, float blue) {
+        return toBGRA(red, green, blue, 1.0f);
+    }
+
+    public static int fromLong(long l) {
+        if(l > Integer.MAX_VALUE) {
+            return Integer.MAX_VALUE;
+        }
+       return (int) l;
+    }
 }

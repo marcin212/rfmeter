@@ -10,7 +10,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 public class RfMeterContainers {
-    private static final DeferredRegister<MenuType<?>> CONTAINERS_REGISTRY = DeferredRegister.create(ForgeRegistries.CONTAINERS, RfMeterMod.MODID);
+    private static final DeferredRegister<MenuType<?>> CONTAINERS_REGISTRY = DeferredRegister.create(ForgeRegistries.MENU_TYPES, RfMeterMod.MODID);
 
     public static final RegistryObject<MenuType<RfMeterContainer>> RF_METER = CONTAINERS_REGISTRY.register("rfmeter",
             () -> IForgeMenuType.create((containerId, inventory, data) -> new RfMeterContainer(containerId, data.readBlockPos(), inventory, inventory.player)));

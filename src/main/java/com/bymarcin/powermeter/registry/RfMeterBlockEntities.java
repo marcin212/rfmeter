@@ -9,7 +9,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 public class RfMeterBlockEntities {
-    private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPE_REGISTER = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, RfMeterMod.MODID);
+    private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPE_REGISTER = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, RfMeterMod.MODID);
     public static final RegistryObject<BlockEntityType<RfMeterBlockEntity>> RF_METER = BLOCK_ENTITY_TYPE_REGISTER.register("rfmeter", ()-> BlockEntityType.Builder.of(RfMeterBlockEntity::new, RfMeterBlocks.RF_METER.get()).build(null));
 
     public static void init(IEventBus modEventBus) {

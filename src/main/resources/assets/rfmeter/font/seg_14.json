@@ -1,0 +1,11 @@
+{
+  "providers": [
+    {
+      "type": "ttf",
+      "file": "rfmeter:seg_14.ttf",
+      "shift": [0.0, 0.0],
+      "size": 50.0,
+      "oversample": 4.0
+    }
+  ]
+}
