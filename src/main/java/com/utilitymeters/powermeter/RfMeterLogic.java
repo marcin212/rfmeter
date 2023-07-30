@@ -212,9 +212,9 @@ public class RfMeterLogic {
     }
 
     private int checkRedstone(){
-        Direction front = entity.getBlockState().getValue(RfMeterBlock.FACING);
+        Direction side = entity.getBlockState().getValue(RfMeterBlock.FACING).getOpposite();
         if(entity.hasLevel()) {
-            return entity.getLevel().getSignal(entity.getBlockPos().relative(front.getOpposite()), front);
+            return entity.getLevel().getSignal(entity.getBlockPos().relative(side), side);
         }
         return 0;
     }
@@ -227,9 +227,6 @@ public class RfMeterLogic {
     public void onRfMeterSyncPacket(RfMeterSyncPacket packet) {
 
         if(RfMeterSyncPacket.ContentFlag.COLOR.hasFlag(packet.flags)) {
-            if(!entity.getLevel().isClientSide) {
-                System.out.println("packet.b" + packet.b);
-            }
             color = new DisplayColor(packet.r, packet.g, packet.b, packet.contrast);
         }
 

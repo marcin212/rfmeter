@@ -100,26 +100,26 @@ public class RfMeterScreen extends CustomScreen implements MenuAccess<RfMeterCon
                     0, 255, color.g * 255, 1, 0, true, this::onColorChange));
             addCustomWidget(new ColorSlider(this::displayColor, ColorSlider.RGB.B, relX+6, startYColor+6 + space * 2, 120, height, emptyLiteral, Component.literal(" B"),
                     0, 255, color.b * 255, 1, 0, true, this::onColorChange));
-            addCustomWidget(new ColorSlider(this::displayColor,ColorSlider.RGB.Contrast, relX+6, startYColor+6 + space * 3, 120, 12, Component.literal("Contrast: "), Component.literal("%"),
+            addCustomWidget(new ColorSlider(this::displayColor,ColorSlider.RGB.Contrast, relX+6, startYColor+6 + space * 3, 120, 12, Component.translatable("screen.utilitymeters.main.contrast"), Component.literal("%"),
                     0, 100, color.contrast * 100, 1,0, true, this::onColorChange));
 
 
 
-            addCustomWidget(new CustomButton(relX + 6 + 120 + 6, startYColor + 6, 100, 20, ()->Component.literal("State: " + (getMenu().getEntity().logic.isOn()?"On":"Off") ), (b)-> {
+            addCustomWidget(new CustomButton(relX + 6 + 120 + 6, startYColor + 6, 100, 20, ()->(getMenu().getEntity().logic.isOn()?Component.translatable("screen.utilitymeters.main.state.on"):Component.translatable("screen.utilitymeters.main.state.off")), (b)-> {
                 var packet = new RfMeterSyncPacket.Builder<>(entity.getBlockPos(), RfMeterSyncC2SPacket.class).addOn(!getMenu().getLogic().isOn()).build();
                 PacketHandler.CHANNEL.send(PacketDistributor.SERVER.noArg(), packet);
             }));
 
-            addCustomWidget(new Button(relX + 6 + 120 + 6, startYColor + 6 + 20 + 1, 100, 20, Component.literal("Settings"), this::onSettings));
+            addCustomWidget(new Button(relX + 6 + 120 + 6, startYColor + 6 + 20 + 1, 100, 20, Component.translatable("screen.utilitymeters.main.settings"), this::onSettings));
 
 
-            logInModal = new TextModal(Component.literal("Log In"),  (pass) -> {
+            logInModal = new TextModal(Component.translatable("screen.utilitymeters.main.login"),  (pass) -> {
                 if(getMenu().getLogic().canEdit(pass))
                     Minecraft.getInstance().pushGuiLayer(new RfMeterSettingsScreen(getMenu(), emptyLiteral));
             }, (pass)->{
 
-            });
-            logInModal.buttonSaveText = Component.literal("Log In");
+            }, true);
+            logInModal.buttonSaveText = Component.translatable("screen.utilitymeters.modalbutton.login");
 
             segDisplay = new SegDisplay(19, 0, false);
         }

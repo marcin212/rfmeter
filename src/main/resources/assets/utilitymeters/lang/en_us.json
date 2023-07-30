@@ -15,5 +15,22 @@
   "screen.utilitymeters.main.currentTransfer": "Current Transfer:",
   "screen.utilitymeters.main.total": "Total:",
   "screen.utilitymeters.main.prepaidLeft": "Prepaid Left:",
-  "screen.utilitymeters.main.prepaidTo": "Prepaid To:"
+  "screen.utilitymeters.main.prepaidTo": "Prepaid To:",
+  "screen.utilitymeters.main.login": "Log In",
+  "screen.utilitymeters.modalbutton.login": "Log In",
+  "screen.utilitymeters.main.state.on": "State: On",
+  "screen.utilitymeters.main.state.off": "State: Off",
+  "screen.utilitymeters.main.settings": "Settings",
+  "screen.utilitymeters.main.contrast": "Contrast: ",
+
+  "screen.utilitymeters.settings.reset.button": "Reset",
+  "screen.utilitymeters.settings.password.button": "Password",
+  "screen.utilitymeters.settings.transfer_limit.button": "Transfer Limit",
+  "screen.utilitymeters.settings.transfer_limit.title": "Transfer Limit",
+  "screen.utilitymeters.settings.set_password.title": "Set Password",
+  "screen.utilitymeters.settings.set_unlimited.button": "Set Unlimited",
+  "screen.utilitymeters.settings.remove_password.button": "Remove Password",
+  "screen.utilitymeters.settings.mode.counter.button": "Mode: Counter",
+  "screen.utilitymeters.settings.mode.prepaid.button": "Mode: Prepaid"
+
 }

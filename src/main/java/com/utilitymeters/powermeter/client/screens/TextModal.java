@@ -3,6 +3,8 @@ package com.utilitymeters.powermeter.client.screens;
 import com.utilitymeters.powermeter.client.screens.wigets.CustomTextField;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.util.FormattedCharSequence;
 
 import java.util.function.Consumer;
 
@@ -17,16 +19,19 @@ public class TextModal extends BasicModal {
 
     Consumer<String> onCustomAction;
 
-    protected TextModal(Component title, Consumer<String> onSave, Consumer<String> onCancel,Component customActionName, Consumer<String> onCustomAction) {
+    boolean password;
+
+    protected TextModal(Component title, Consumer<String> onSave, Consumer<String> onCancel,Component customActionName, Consumer<String> onCustomAction, boolean password) {
         super(title);
         this.onSave = onSave;
         this.onCancel = onCancel;
         this.onCustomAction = onCustomAction;
         this.customActionName = customActionName;
+        this.password = password;
     }
 
-    protected TextModal(Component title, Consumer<String> onSave, Consumer<String> onCancel) {
-        this(title, onSave, onCancel, null, null);
+    protected TextModal(Component title, Consumer<String> onSave, Consumer<String> onCancel, boolean password) {
+        this(title, onSave, onCancel, null, null, password);
     }
 
     @Override
@@ -40,6 +45,9 @@ public class TextModal extends BasicModal {
             addCustomWidget(customActionButton);
         }
 
+        if(password) {
+            this.modalValue.setFormatter((a, b) -> FormattedCharSequence.forward(a, Style.EMPTY.withObfuscated(true)));
+        }
     }
 
     @Override
