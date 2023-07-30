@@ -2,7 +2,8 @@ package com.utilitymeters.utilitymeters.capabilities;
 
 import net.minecraftforge.common.capabilities.AutoRegisterCapability;
 
-@AutoRegisterCapability
+//TODO
+//@AutoRegisterCapability
 public interface IEnergyMeterCapability {
     boolean isInCounterMode();
 
