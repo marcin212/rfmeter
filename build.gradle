@@ -19,8 +19,8 @@ plugins {
 
 
 version = '1.0'
-group = 'com.bymarcin.rfmeter' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'rfmeter'
+group = 'com.bymarcin.utilitymeters' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = 'utilitymeters'
 
 // Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -67,7 +67,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-            property 'forge.enabledGameTestNamespaces', 'rfmeter'
+            property 'forge.enabledGameTestNamespaces', 'utilitymeters'
 
             mods {
                 rfmeter {
@@ -116,7 +116,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-            property 'forge.enabledGameTestNamespaces', 'rfmeter'
+            property 'forge.enabledGameTestNamespaces', 'utilitymeters'
 
             mods {
                 rfmeter {
@@ -190,7 +190,7 @@ dependencies {
 jar {
     manifest {
         attributes([
-                "Specification-Title"     : "rfmeter",
+                "Specification-Title"     : "utilitymeters",
                 "Specification-Vendor"    : "marcin212",
                 "Specification-Version"   : "1", // We are version 1 of ourselves
                 "Implementation-Title"    : project.name,

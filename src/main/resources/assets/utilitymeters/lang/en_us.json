@@ -1,0 +1,19 @@
+{
+  "itemGroup.utilitymeters": "Utility Meters",
+  "block.utilitymeters.rfmeter": "RF Meter",
+  "screen.utilitymeters.rfmeter": "RF Meter",
+  "screen.utilitymeters.modalbutton.add1K": "+1K",
+  "screen.utilitymeters.modalbutton.add1M": "+1M",
+  "screen.utilitymeters.modalbutton.add1G": "+1G",
+  "screen.utilitymeters.modalbutton.sub1K": "-1K",
+  "screen.utilitymeters.modalbutton.sub1M": "-1M",
+  "screen.utilitymeters.modalbutton.sub1G": "-1G",
+  "screen.utilitymeters.modalbutton.save": "Save",
+  "screen.utilitymeters.modalbutton.cancel": "Cancel",
+  "screen.utilitymeters.modalbutton.addToPrepaidTitle": "Add to prepaid",
+  "screen.utilitymeters.modalbutton.subFromPrepaid": "Subtract from prepaid",
+  "screen.utilitymeters.main.currentTransfer": "Current Transfer:",
+  "screen.utilitymeters.main.total": "Total:",
+  "screen.utilitymeters.main.prepaidLeft": "Prepaid Left:",
+  "screen.utilitymeters.main.prepaidTo": "Prepaid To:"
+}

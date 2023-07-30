@@ -1,4 +1,4 @@
-import com.bymarcin.powermeter.client.screens.wigets.SegDisplay;
+import com.utilitymeters.powermeter.client.screens.wigets.SegDisplay;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

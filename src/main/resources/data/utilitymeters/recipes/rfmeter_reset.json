@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {"item":"utilitymeters:rfmeter"},
+    {"tag":"buttons"}
+  ],
+  "result": {
+    "item": "utilitymeters:rfmeter",
+    "count": 1
+  }
+}

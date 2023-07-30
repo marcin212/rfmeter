@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "utilitymeters:rfmeter",
+          "functions": [
+            {
+              "function": "minecraft:copy_nbt",
+              "source": "block_entity",
+              "ops": [
+                {
+                  "source": "{}",
+                  "target": "BlockEntityTag",
+                  "op": "replace"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:copy_state",
+              "block": "utilitymeters:rfmeter",
+              "properties": [
+                "flow_direction"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
