@@ -1,6 +1,6 @@
 package com.utilitymeters.powermeter.client.screens;
 
-import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
@@ -13,7 +13,7 @@ public abstract class CustomScreen extends Screen {
         super(component);
     }
 
-    public <T extends GuiEventListener & Widget & NarratableEntry> void addCustomWidget(T widget) {
+    public <T extends GuiEventListener & Renderable & NarratableEntry> void addCustomWidget(T widget) {
         this.addRenderableWidget(widget);
     }
 }

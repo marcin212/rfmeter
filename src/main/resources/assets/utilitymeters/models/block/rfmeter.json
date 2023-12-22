@@ -23,7 +23,7 @@
     }
   ],
   "textures": {
-    "all": "utilitymeters:blocks/rfmeter",
-    "particle": "utilitymeters:blocks/rfmeter"
+    "all": "utilitymeters:block/rfmeter",
+    "particle": "utilitymeters:block/rfmeter"
   }
 }

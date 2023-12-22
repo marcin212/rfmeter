@@ -1,19 +1,18 @@
 package com.utilitymeters.powermeter;
 
+import com.mojang.logging.LogUtils;
 import com.utilitymeters.powermeter.registry.RfMeterBlockEntities;
 import com.utilitymeters.powermeter.registry.RfMeterBlocks;
 import com.utilitymeters.powermeter.registry.RfMeterContainers;
 import com.utilitymeters.powermeter.registry.RfMeterItems;
-import com.utilitymeters.powermeter.tabs.RfMeterTab;
-import com.mojang.logging.LogUtils;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
-import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
@@ -24,8 +23,6 @@ public class RfMeterMod
 {
     public static final Logger LOGGER = LogUtils.getLogger();
     public static final String MODID = "utilitymeters";
-    public static final RfMeterTab TAB = new RfMeterTab(MODID);
-
 
     public RfMeterMod()
     {

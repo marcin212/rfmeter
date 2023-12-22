@@ -21,7 +21,7 @@ public class TextModal extends BasicModal {
 
     boolean password;
 
-    protected TextModal(Component title, Consumer<String> onSave, Consumer<String> onCancel,Component customActionName, Consumer<String> onCustomAction, boolean password) {
+    protected TextModal(Component title, Consumer<String> onSave, Consumer<String> onCancel, Component customActionName, Consumer<String> onCustomAction, boolean password) {
         super(title);
         this.onSave = onSave;
         this.onCancel = onCancel;
@@ -38,14 +38,15 @@ public class TextModal extends BasicModal {
     protected void init() {
         super.init();
 
-        modalValue = new CustomTextField(font, startX - 120/2, startY, 120, 20, Component.empty(), (value)->{}, (s)->true);
+        modalValue = new CustomTextField(font, startX - 120 / 2, startY, 120, 20, Component.empty(), (value) -> {
+        }, (s) -> true);
         addCustomWidget(modalValue);
-        if(onCustomAction != null && customActionName != null) {
-            customActionButton = new Button(startX - 120 / 2, startY + 22, 120, 20, customActionName, this::onCustomAction);
+        if (onCustomAction != null && customActionName != null) {
+            customActionButton = Button.builder(customActionName, this::onCustomAction).bounds(startX - 120 / 2, startY + 22, 120, 20).build();
             addCustomWidget(customActionButton);
         }
 
-        if(password) {
+        if (password) {
             this.modalValue.setFormatter((a, b) -> FormattedCharSequence.forward(a, Style.EMPTY.withObfuscated(true)));
         }
     }

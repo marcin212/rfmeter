@@ -1,8 +1,7 @@
 package com.utilitymeters.powermeter.client.screens.wigets;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.gui.widget.ForgeSlider;
 
@@ -23,16 +22,14 @@ public class CustomSlider extends ForgeSlider {
     }
 
     @Override
-    protected void renderBg(PoseStack pPoseStack, Minecraft pMinecraft, int pMouseX, int pMouseY) {
-        RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
+    public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         int i = (this.isHoveredOrFocused() ? 2 : 1) * 20;
-        this.blit(pPoseStack,
-                this.x + (int) (this.value * (double) (this.width - 8)), this.y, 4, this.height,
+        pGuiGraphics.blit(WIDGETS_LOCATION, this.getX() + (int) (this.value * (double) (this.width - 8)), this.getY(), 4, this.height,
                 0, 46 + i, 4, 20, 256, 256);
-        this.blit(pPoseStack,
-                this.x + (int) (this.value * (double) (this.width - 8)) + 4, this.y, 4, this.height,
+        pGuiGraphics.blit(WIDGETS_LOCATION, this.getX() + (int) (this.value * (double) (this.width - 8)) + 4, this.getY(), 4, this.height,
                 196, 46 + i, 4, 20, 256, 256);
 
+        super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
     }
 }

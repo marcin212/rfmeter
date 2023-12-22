@@ -1,9 +1,8 @@
 package com.utilitymeters.powermeter.client.screens.wigets;
 
-import com.utilitymeters.powermeter.RfMeterLogic;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
+import com.utilitymeters.powermeter.RfMeterLogic;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.gui.widget.ForgeSlider;
 
@@ -50,6 +49,7 @@ public class ColorSlider extends ForgeSlider {
             }
         }
     }
+
     @Override
     public boolean mouseReleased(double pMouseX, double pMouseY, int pButton) {
         onChange.accept(color.get());
@@ -57,20 +57,16 @@ public class ColorSlider extends ForgeSlider {
     }
 
     @Override
-    public void render(PoseStack p_93657_, int p_93658_, int p_93659_, float p_93660_) {
-        super.render(p_93657_, p_93658_, p_93659_, p_93660_);
-    }
-
-    protected void renderBg(PoseStack p_93600_, Minecraft p_93601_, int p_93602_, int p_93603_) {
-        RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
+    public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         int i = (this.isHoveredOrFocused() ? 2 : 1) * 20;
-        this.blit(p_93600_,
-                this.x + (int) (this.value * (double) (this.width - 8)), this.y, 4, this.height,
-                0, 46 + i,  4,20 , 256, 256);
-        this.blit(p_93600_,
-                this.x + (int) (this.value * (double) (this.width - 8)) + 4 , this.y, 4, this.height,
-                196, 46 + i,  4,20 , 256, 256);
+        pGuiGraphics.blit(WIDGETS_LOCATION,
+                this.getX() + (int) (this.value * (double) (this.width - 8)), this.getY(), 4, this.height,
+                0, 46 + i, 4, 20, 256, 256);
+        pGuiGraphics.blit(WIDGETS_LOCATION,
+                this.getX() + (int) (this.value * (double) (this.width - 8)) + 4, this.getY(), 4, this.height,
+                196, 46 + i, 4, 20, 256, 256);
 
+        super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
     }
 }

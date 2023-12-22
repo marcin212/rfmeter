@@ -21,25 +21,37 @@ public class IncrementNumberModal extends NumberModal {
     protected void init() {
         super.init();
 
-            add1K = new Button(startX - (3 * 32) / 2, startY + modalValue.getHeight() + 3, 30, modalValue.getHeight(),
-                    isAdd?
-                            Component.translatable("screen.utilitymeters.modalbutton.add1K"):
-                            Component.translatable("screen.utilitymeters.modalbutton.sub1K")
-                    , this::onAdd1K);
-            add1M = new Button(add1K.x + add1K.getWidth() + 2, add1K.y, 30, modalValue.getHeight(),
-                    isAdd?
-                            Component.translatable("screen.utilitymeters.modalbutton.add1M"):
-                            Component.translatable("screen.utilitymeters.modalbutton.sub1G")
-                    , this::onAdd1M);
-            add1G = new Button(add1M.x + add1M.getWidth() + 2, add1M.y, 30, modalValue.getHeight(),
-                    isAdd?
-                            Component.translatable("screen.utilitymeters.modalbutton.add1G"):
-                            Component.translatable("screen.utilitymeters.modalbutton.sub1G")
-                    , this::onAdd1G);
+        add1K = Button.builder(text1K(), this::onAdd1K)
+                .bounds(startX - (3 * 32) / 2, startY + modalValue.getHeight() + 3, 30, modalValue.getHeight())
+                .build();
+        add1M = Button.builder(text1M(), this::onAdd1M)
+                .bounds(add1K.getX() + add1K.getWidth() + 2, add1K.getY(), 30, modalValue.getHeight())
+                .build();
+        add1G = Button.builder(text1G(), this::onAdd1G)
+                .bounds(add1M.getX() + add1M.getWidth() + 2, add1M.getY(), 30, modalValue.getHeight())
+                .build();
 
-            addCustomWidget(add1K);
-            addCustomWidget(add1M);
-            addCustomWidget(add1G);
+        addCustomWidget(add1K);
+        addCustomWidget(add1M);
+        addCustomWidget(add1G);
+    }
+
+    private Component text1K() {
+        return isAdd ?
+                Component.translatable("screen.utilitymeters.modalbutton.add1K") :
+                Component.translatable("screen.utilitymeters.modalbutton.sub1K");
+    }
+
+    private Component text1M() {
+        return isAdd ?
+                Component.translatable("screen.utilitymeters.modalbutton.add1M") :
+                Component.translatable("screen.utilitymeters.modalbutton.sub1M");
+    }
+
+    private Component text1G() {
+        return isAdd ?
+                Component.translatable("screen.utilitymeters.modalbutton.add1G") :
+                Component.translatable("screen.utilitymeters.modalbutton.sub1G");
     }
 
     private void addToValue(long value) {

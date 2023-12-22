@@ -1,16 +1,19 @@
 package com.utilitymeters.powermeter.client.screens;
 
-import com.utilitymeters.powermeter.RfMeterMod;
-import com.utilitymeters.powermeter.client.screens.wigets.*;
-import com.utilitymeters.powermeter.network.PacketHandler;
-import com.utilitymeters.powermeter.RfMeterLogic;
-import com.utilitymeters.powermeter.containers.RfMeterContainer;
-import com.utilitymeters.powermeter.network.RfMeterSyncC2SPacket;
-import com.utilitymeters.powermeter.network.RfMeterSyncPacket;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.utilitymeters.powermeter.RfMeterLogic;
+import com.utilitymeters.powermeter.RfMeterMod;
+import com.utilitymeters.powermeter.client.screens.wigets.ColorSlider;
+import com.utilitymeters.powermeter.client.screens.wigets.CustomButton;
+import com.utilitymeters.powermeter.client.screens.wigets.SegDisplay;
+import com.utilitymeters.powermeter.containers.RfMeterContainer;
+import com.utilitymeters.powermeter.network.PacketHandler;
+import com.utilitymeters.powermeter.network.RfMeterSyncC2SPacket;
+import com.utilitymeters.powermeter.network.RfMeterSyncPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
@@ -23,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class RfMeterScreen extends CustomScreen implements MenuAccess<RfMeterContainer> {
-    public static final ResourceLocation RFMETER_LOCATION = new ResourceLocation(RfMeterMod.MODID,"textures/gui/container/rfmeter.png");
+    public static final ResourceLocation RFMETER_LOCATION = new ResourceLocation(RfMeterMod.MODID, "textures/gui/container/rfmeter.png");
     public static final int imageWidth = 256;
     public static final int imageHeight = 256;
     private static final Component emptyLiteral = Component.literal("");
@@ -82,7 +85,7 @@ public class RfMeterScreen extends CustomScreen implements MenuAccess<RfMeterCon
     protected void init() {
         super.init();
 
-         var entity = getMenu().getEntity();
+        var entity = getMenu().getEntity();
 
         int relX = (this.width - this.imageWidth) / 2;
         int relY = (this.height - this.imageHeight) / 2;
@@ -94,29 +97,28 @@ public class RfMeterScreen extends CustomScreen implements MenuAccess<RfMeterCon
             int space = height + 1;
 
             int startYColor = relY + 145;
-            addCustomWidget(new ColorSlider(this::displayColor, ColorSlider.RGB.R,relX+6, startYColor+6, 120, height, emptyLiteral, Component.literal(" R"),
+            addCustomWidget(new ColorSlider(this::displayColor, ColorSlider.RGB.R, relX + 6, startYColor + 6, 120, height, emptyLiteral, Component.literal(" R"),
                     0, 255, color.r * 255, 1, 0, true, this::onColorChange));
-            addCustomWidget(new ColorSlider(this::displayColor, ColorSlider.RGB.G,relX+6, startYColor+6 + space, 120, height, emptyLiteral, Component.literal(" G"),
+            addCustomWidget(new ColorSlider(this::displayColor, ColorSlider.RGB.G, relX + 6, startYColor + 6 + space, 120, height, emptyLiteral, Component.literal(" G"),
                     0, 255, color.g * 255, 1, 0, true, this::onColorChange));
-            addCustomWidget(new ColorSlider(this::displayColor, ColorSlider.RGB.B, relX+6, startYColor+6 + space * 2, 120, height, emptyLiteral, Component.literal(" B"),
+            addCustomWidget(new ColorSlider(this::displayColor, ColorSlider.RGB.B, relX + 6, startYColor + 6 + space * 2, 120, height, emptyLiteral, Component.literal(" B"),
                     0, 255, color.b * 255, 1, 0, true, this::onColorChange));
-            addCustomWidget(new ColorSlider(this::displayColor,ColorSlider.RGB.Contrast, relX+6, startYColor+6 + space * 3, 120, 12, Component.translatable("screen.utilitymeters.main.contrast"), Component.literal("%"),
-                    0, 100, color.contrast * 100, 1,0, true, this::onColorChange));
+            addCustomWidget(new ColorSlider(this::displayColor, ColorSlider.RGB.Contrast, relX + 6, startYColor + 6 + space * 3, 120, 12, Component.translatable("screen.utilitymeters.main.contrast"), Component.literal("%"),
+                    0, 100, color.contrast * 100, 1, 0, true, this::onColorChange));
 
 
-
-            addCustomWidget(new CustomButton(relX + 6 + 120 + 6, startYColor + 6, 100, 20, ()->(getMenu().getEntity().logic.isOn()?Component.translatable("screen.utilitymeters.main.state.on"):Component.translatable("screen.utilitymeters.main.state.off")), (b)-> {
+            addCustomWidget(new CustomButton(relX + 6 + 120 + 6, startYColor + 6, 100, 20, () -> (getMenu().getEntity().logic.isOn() ? Component.translatable("screen.utilitymeters.main.state.on") : Component.translatable("screen.utilitymeters.main.state.off")), (b) -> {
                 var packet = new RfMeterSyncPacket.Builder<>(entity.getBlockPos(), RfMeterSyncC2SPacket.class).addOn(!getMenu().getLogic().isOn()).build();
                 PacketHandler.CHANNEL.send(PacketDistributor.SERVER.noArg(), packet);
             }));
 
-            addCustomWidget(new Button(relX + 6 + 120 + 6, startYColor + 6 + 20 + 1, 100, 20, Component.translatable("screen.utilitymeters.main.settings"), this::onSettings));
+            addCustomWidget(Button.builder(Component.translatable("screen.utilitymeters.main.settings"), this::onSettings).bounds(relX + 6 + 120 + 6, startYColor + 6 + 20 + 1, 100, 20).build());
 
 
-            logInModal = new TextModal(Component.translatable("screen.utilitymeters.main.login"),  (pass) -> {
-                if(getMenu().getLogic().canEdit(pass))
+            logInModal = new TextModal(Component.translatable("screen.utilitymeters.main.login"), (pass) -> {
+                if (getMenu().getLogic().canEdit(pass))
                     Minecraft.getInstance().pushGuiLayer(new RfMeterSettingsScreen(getMenu(), emptyLiteral));
-            }, (pass)->{
+            }, (pass) -> {
 
             }, true);
             logInModal.buttonSaveText = Component.translatable("screen.utilitymeters.modalbutton.login");
@@ -127,7 +129,7 @@ public class RfMeterScreen extends CustomScreen implements MenuAccess<RfMeterCon
 
     private void onSettings(Button button) {
         var logic = getMenu().getLogic();
-        if(logic.isProtected()) {
+        if (logic.isProtected()) {
             logInModal.openModal();
         } else {
             Minecraft.getInstance().pushGuiLayer(new RfMeterSettingsScreen(getMenu(), emptyLiteral));
@@ -145,44 +147,43 @@ public class RfMeterScreen extends CustomScreen implements MenuAccess<RfMeterCon
     }
 
     @Override
-    public void render(PoseStack stack, int p_97796_, int p_97797_, float p_97798_) {
-        stack.pushPose();
-        renderBg(stack, p_97798_, p_97796_, p_97797_);
-        if(Minecraft.getInstance().screen != this) return;
-        super.render(stack, p_97796_, p_97797_, p_97798_);
+    public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+        pGuiGraphics.pose().pushPose();
+        renderBg(pGuiGraphics, pPartialTick, pMouseX, pMouseY);
+        if (Minecraft.getInstance().screen != this) return;
+        super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
         var color = getMenu().getLogic().getColor();
 
         float scale = 0.3f;
         int relX = (this.width - imageWidth) / 2;
         int relY = (this.height - imageHeight) / 2;
-        relX += imageWidth/2;
-        stack.pushPose();
+        relX += imageWidth / 2;
+        pGuiGraphics.pose().pushPose();
 
         var offset = 17;
         var logic = getMenu().getLogic();
-        font.draw(stack, transferTitle, relX - transferTitleWidth/2f, relY + offset, 0x3F3F3F);
-        font.draw(stack, totalTitle, relX - totalWidth/2f, relY + offset + 28, 0x3F3F3F);
-        if(!logic.isInCounterMode()) {
-            font.draw(stack, prepaidLeftTitle, relX - prepaidLeftWidth / 2f, relY + offset + 28 * 2, 0x3F3F3F);
-            font.draw(stack, prepaidToTitle, relX - prepaidToWidth / 2f, relY + offset + 28 * 3, 0x3F3F3F);
+        pGuiGraphics.drawString(this.font, transferTitle,  (int)(relX - transferTitleWidth / 2f), relY + offset, 0x3F3F3F, false);
+        pGuiGraphics.drawString(this.font, totalTitle, (int)(relX - totalWidth / 2f), relY + offset + 28, 0x3F3F3F, false);
+        if (!logic.isInCounterMode()) {
+            pGuiGraphics.drawString(this.font, prepaidLeftTitle, (int)(relX - prepaidLeftWidth / 2f), relY + offset + 28 * 2, 0x3F3F3F, false);
+            pGuiGraphics.drawString(this.font, prepaidToTitle, (int)(relX - prepaidToWidth / 2f), relY + offset + 28 * 3, 0x3F3F3F, false);
         }
-        stack.scale(scale, scale, 0.0f);
-        var segX = (relX - segDisplay.getTextWidth()/2*scale)/scale;
-        segDisplay.render(stack, logic.getTransfer(), color.r, color.g, color.b, color.contrast, segX, (relY + 28 )/scale);
-        segDisplay.render(stack, logic.getCurrentValue(), color.r, color.g, color.b, color.contrast, segX, (relY + 28 * 2)/scale );
-        if(!logic.isInCounterMode()) {
-            segDisplay.render(stack, logic.calculatedPrepaid(), color.r, color.g, color.b, color.contrast, segX, (relY + 28 * 3) / scale);
-            segDisplay.render(stack, logic.getPrepaidValue(), color.r, color.g, color.b, color.contrast, segX, (relY + 28 * 4) / scale);
+        pGuiGraphics.pose().scale(scale, scale, 0.0f);
+        var segX = (relX - segDisplay.getTextWidth() / 2 * scale) / scale;
+        segDisplay.render(pGuiGraphics, logic.getTransfer(), color.r, color.g, color.b, color.contrast, segX, (relY + 28) / scale);
+        segDisplay.render(pGuiGraphics, logic.getCurrentValue(), color.r, color.g, color.b, color.contrast, segX, (relY + 28 * 2) / scale);
+        if (!logic.isInCounterMode()) {
+            segDisplay.render(pGuiGraphics, logic.calculatedPrepaid(), color.r, color.g, color.b, color.contrast, segX, (relY + 28 * 3) / scale);
+            segDisplay.render(pGuiGraphics, logic.getPrepaidValue(), color.r, color.g, color.b, color.contrast, segX, (relY + 28 * 4) / scale);
         }
-        stack.popPose();
+        pGuiGraphics.pose().popPose();
 
     }
 
-    protected void renderBg(PoseStack stack, float p_97788_, int p_97789_, int p_97790_) {
-        RenderSystem.setShaderTexture(0, RFMETER_LOCATION);
-        int relX = (this.width - this.imageWidth) / 2;
-        int relY = (this.height - this.imageHeight) / 2;
-        this.blit(stack, relX, relY, 0, 0, this.imageWidth, this.imageHeight);
+    protected void renderBg(GuiGraphics pGuiGraphics, float p_97788_, int p_97789_, int p_97790_) {
+        int relX = (this.width - imageWidth) / 2;
+        int relY = (this.height - imageHeight) / 2;
+        pGuiGraphics.blit(RFMETER_LOCATION, relX, relY, 0, 0, imageWidth, imageHeight);
     }
 
     @Override

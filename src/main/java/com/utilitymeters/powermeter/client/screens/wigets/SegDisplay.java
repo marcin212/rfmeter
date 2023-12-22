@@ -5,6 +5,7 @@ import com.utilitymeters.powermeter.RfMeterMod;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
@@ -63,8 +64,9 @@ public class SegDisplay {
             }
 
             fill(stack, x - 5, y - 5, textWidth + 5, bgHeight + 5, 0, 0, 0, multiBufferSource);
-            Minecraft.getInstance().font.draw(stack, textBg, x, y, 0);
-            Minecraft.getInstance().font.draw(stack, text, x, y, 0);
+
+            Minecraft.getInstance().font.drawInBatch(textBg, x, y, 0, false, stack.last().pose(), multiBufferSource, Font.DisplayMode.NORMAL, 0, 255);
+            Minecraft.getInstance().font.drawInBatch(text, x, y, 0, false, stack.last().pose(), multiBufferSource, Font.DisplayMode.NORMAL, 0, 255);
         }
     }
 
@@ -114,8 +116,8 @@ public class SegDisplay {
 
         return new SegDisplayNum(displayText, " ".repeat(segCount-postfix.length()-1) + ".");
     }
-    public void render(PoseStack stack, long value, float r, float g, float b, float contrast, float x, float y) {
-        render(stack, value, r, g, b, contrast, x, y, null);
+    public void render(GuiGraphics guiGraphics, long value, float r, float g, float b, float contrast, float x, float y) {
+        render(guiGraphics.pose(), value, r, g, b, contrast, x, y, guiGraphics.bufferSource());
     }
     public void render(PoseStack stack, long value, float r, float g, float b, float contrast, float x, float y, MultiBufferSource bufferSource) {
         if(lastValue != value) {
@@ -138,11 +140,12 @@ public class SegDisplay {
 
 
         fill(stack, x - 5, y - 5, textWidth + 5, bgHeight + 5, 0, 0, 0, bufferSource);
-        Minecraft.getInstance().font.draw(stack, bgTextToRender, x, y, 0);
+
+        Minecraft.getInstance().font.drawInBatch(bgTextToRender, x, y, 0, false, stack.last().pose(), bufferSource, Font.DisplayMode.NORMAL, 0, 255);
         if (precision != 0) {
-            Minecraft.getInstance().font.draw(stack, dotTextToRender, x, y, 0);
+            Minecraft.getInstance().font.drawInBatch(dotTextToRender, x, y, 0, false, stack.last().pose(), bufferSource, Font.DisplayMode.NORMAL, 0, 255);
         }
-        Minecraft.getInstance().font.draw(stack, numberTextToRender, x, y, 0);
+        Minecraft.getInstance().font.drawInBatch(numberTextToRender, x, y, 0, false, stack.last().pose(), bufferSource, Font.DisplayMode.NORMAL, 0, 255);
 
     }
 
@@ -152,7 +155,7 @@ public class SegDisplay {
         var matrix = stack.last().pose();
 
         var buff = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
-        VertexConsumer vertexconsumer = buff.getBuffer(RenderType.text(new ResourceLocation("")));
+        VertexConsumer vertexconsumer = buff.getBuffer(RenderType.textBackground());
 
 
         vertexconsumer.vertex(matrix, x, maxY, 0.0005F).color(r, g, b, 1).uv(0, 0).uv2(15728880).endVertex();

@@ -25,7 +25,7 @@ public class NumberModal extends BasicModal {
         super(title);
         this.onCancel = onCancel;
         this.onSave = onSave;
-        this.initializer = ()->"";
+        this.initializer = () -> "";
     }
 
     public NumberModal(Component title, LongConsumer onSave, LongConsumer onCancel, Component customActionName, LongConsumer onCustomAction, Supplier<String> initializer) {
@@ -38,11 +38,12 @@ public class NumberModal extends BasicModal {
     @Override
     protected void init() {
         super.init();
-        modalValue = new CustomTextField(font, startX - 120/2, startY, 120, 20, Component.empty(), (value)->{}, this::onlyNumbersFilter);
+        modalValue = new CustomTextField(font, startX - 120 / 2, startY, 120, 20, Component.empty(), (value) -> {
+        }, this::onlyNumbersFilter);
         modalValue.setValue(initializer.get());
         addCustomWidget(modalValue);
-        if(hasCustomAction()) {
-            customActionButton = new Button(startX - 120/2, startY+ 22, 120, 20, customActionName, this::onCustomAction);
+        if (hasCustomAction()) {
+            customActionButton = Button.builder(customActionName, this::onCustomAction).bounds(startX - 120 / 2, startY + 22, 120, 20).build();
             addCustomWidget(customActionButton);
         }
     }
@@ -64,11 +65,12 @@ public class NumberModal extends BasicModal {
     }
 
     void onCustomAction(Button button) {
-       if(hasCustomAction()) {
-           closeModal();
-           onCustomAction.accept(modalValue.getValueAsLong());
-       }
+        if (hasCustomAction()) {
+            closeModal();
+            onCustomAction.accept(modalValue.getValueAsLong());
+        }
     }
+
     boolean onlyNumbersFilter(String value) {
         return value == null || value.isEmpty() || value.matches("[0-9]+");
     }

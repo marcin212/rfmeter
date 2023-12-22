@@ -2,6 +2,7 @@ package com.utilitymeters.powermeter.blocks;
 
 import com.utilitymeters.powermeter.blockentity.RfMeterBlockEntity;
 import com.utilitymeters.powermeter.containers.RfMeterContainer;
+import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,7 +26,6 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -69,7 +69,7 @@ public class RfMeterBlock extends Block implements EntityBlock {
     };
 
     public RfMeterBlock() {
-        super(Properties.of(Material.METAL).sound(SoundType.METAL).lightLevel(value -> 4).strength(3.5F));
+        super(Properties.of().sound(SoundType.METAL).lightLevel(value -> 4).strength(3.5F));
     }
 
     @Override

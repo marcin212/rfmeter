@@ -9,7 +9,7 @@ public class CustomButton extends Button {
     private final Supplier<Component> componentSupplier;
 
     public CustomButton(int x, int y, int width, int height, Supplier<Component> componentSupplier, OnPress onPress) {
-        super(x, y, width, height, componentSupplier.get(), onPress);
+                super(x, y, width, height, componentSupplier.get(), onPress, Button.DEFAULT_NARRATION);
         this.componentSupplier = componentSupplier;
     }
 
