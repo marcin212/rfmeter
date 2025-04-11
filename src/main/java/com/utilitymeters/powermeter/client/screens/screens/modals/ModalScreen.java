@@ -1,5 +1,6 @@
-package com.utilitymeters.powermeter.client.screens;
+package com.utilitymeters.powermeter.client.screens.screens.modals;
 
+import com.utilitymeters.powermeter.client.screens.screens.CustomScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 

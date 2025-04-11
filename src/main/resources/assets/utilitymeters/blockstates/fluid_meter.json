@@ -5,10 +5,10 @@
     {  "when": { "facing": "west" }, "apply": { "model": "utilitymeters:block/rfmeter_front_frame" } },
     {  "when": { "facing": "east" }, "apply": { "model": "utilitymeters:block/rfmeter_front_frame", "y": 180 } },
 
-    {  "when": { "facing": "north" }, "apply": { "model": "utilitymeters:block/rfmeter_sign", "y": 90} },
-    {  "when": { "facing": "south" }, "apply": { "model": "utilitymeters:block/rfmeter_sign","y": 270 } },
-    {  "when": { "facing": "west" }, "apply": { "model": "utilitymeters:block/rfmeter_sign" } },
-    {  "when": { "facing": "east" }, "apply": { "model": "utilitymeters:block/rfmeter_sign", "y": 180 } },
+    {  "when": { "facing": "north" }, "apply": { "model": "utilitymeters:block/fluid_meter_sign", "y": 90} },
+    {  "when": { "facing": "south" }, "apply": { "model": "utilitymeters:block/fluid_meter_sign","y": 270 } },
+    {  "when": { "facing": "west" }, "apply": { "model": "utilitymeters:block/fluid_meter_sign" } },
+    {  "when": { "facing": "east" }, "apply": { "model": "utilitymeters:block/fluid_meter_sign", "y": 180 } },
 
     {  "when": { "facing": "north", "flow_direction": "up_down" }, "apply": { "model": "utilitymeters:block/rfmeter_base", "y": 90 } },
     {  "when": { "facing": "north", "flow_direction": "down_up" }, "apply": { "model": "utilitymeters:block/rfmeter_base_inverted", "y": 90} },

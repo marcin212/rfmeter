@@ -16,9 +16,15 @@ public class RfMeterItems {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, RfMeterMod.MODID);
     private static final DeferredRegister<Item> ITEMS_REGISTER = DeferredRegister.create(ForgeRegistries.ITEMS, RfMeterMod.MODID);
     public static final RegistryObject<BlockItem> RF_METER = ITEMS_REGISTER.register("rfmeter", () -> new BlockItem(RfMeterBlocks.RF_METER.get(), new Item.Properties()));
+    public static final RegistryObject<BlockItem> ITEM_METER = ITEMS_REGISTER.register("item_meter", () -> new BlockItem(RfMeterBlocks.ITEM_METER.get(), new Item.Properties()));
+    public static final RegistryObject<BlockItem> FLUID_METER = ITEMS_REGISTER.register("fluid_meter", () -> new BlockItem(RfMeterBlocks.FLUID_METER.get(), new Item.Properties()));
     private static RegistryObject<CreativeModeTab> METER_TAB = CREATIVE_TABS.register("utility_meters",
             () -> CreativeModeTab.builder()
-                    .displayItems((displayParams, output) -> output.accept(new ItemStack(RF_METER.get())))
+                    .displayItems((displayParams, output) -> {
+                        output.accept(new ItemStack(RF_METER.get()));
+                        output.accept(new ItemStack(ITEM_METER.get()));
+                        output.accept(new ItemStack(FLUID_METER.get()));
+                    })
                     .icon(() -> new ItemStack(RF_METER.get()))
                     .title(Component.translatable("itemGroup.utilitymeters"))
                     .build());

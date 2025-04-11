@@ -1,7 +1,11 @@
-package com.utilitymeters.powermeter.client.screens;
+package com.utilitymeters.powermeter.client.screens.screens;
 
+import com.utilitymeters.powermeter.client.screens.screens.modals.IncrementNumberModal;
+import com.utilitymeters.powermeter.client.screens.screens.modals.ModalScreen;
+import com.utilitymeters.powermeter.client.screens.screens.modals.NumberModal;
+import com.utilitymeters.powermeter.client.screens.screens.modals.TextModal;
 import com.utilitymeters.powermeter.client.screens.wigets.CustomButton;
-import com.utilitymeters.powermeter.containers.RfMeterContainer;
+import com.utilitymeters.powermeter.containers.BaseMeterContainer;
 import com.utilitymeters.powermeter.network.PacketHandler;
 import com.utilitymeters.powermeter.network.RfMeterSyncC2SPacket;
 import com.utilitymeters.powermeter.network.RfMeterSyncPacket;
@@ -12,8 +16,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
-public class RfMeterSettingsScreen extends ModalScreen implements MenuAccess<RfMeterContainer> {
-    protected final RfMeterContainer menu;
+public class MeterSettingsScreen extends ModalScreen implements MenuAccess<BaseMeterContainer> {
+    protected final BaseMeterContainer menu;
     public static final int imageWidth = 256;
     public static final int imageHeight = 256;
 
@@ -23,13 +27,13 @@ public class RfMeterSettingsScreen extends ModalScreen implements MenuAccess<RfM
     private NumberModal transferLimitModal;
     private TextModal passwordModal;
 
-    protected RfMeterSettingsScreen(RfMeterContainer container, Component title) {
+    protected MeterSettingsScreen(BaseMeterContainer container, Component title) {
         super(title);
         this.menu = container;
     }
 
     @Override
-    public @NotNull RfMeterContainer getMenu() {
+    public @NotNull BaseMeterContainer getMenu() {
         return this.menu;
     }
 
@@ -39,6 +43,8 @@ public class RfMeterSettingsScreen extends ModalScreen implements MenuAccess<RfM
         int relX = (this.width - imageWidth) / 2;
         int relY = (this.height - imageHeight) / 2;
         var entity = getMenu().getEntity();
+        var logic = getMenu().getLogic();
+
 
         var buttonAdd = Button.builder(Component.literal("+"), this::openAddModal).bounds(relX + 6, relY + 6 + 22 * 4, 45, 20).build();
         var buttonSub = Button.builder(Component.literal("-"), this::openSubtractModal).bounds(relX + 6 + 55, relY + 6 + 22 * 4, 45, 20).build();
@@ -47,12 +53,12 @@ public class RfMeterSettingsScreen extends ModalScreen implements MenuAccess<RfM
         addCustomWidget(buttonSub);
 
         addCustomWidget(new CustomButton(relX + 6, relY + 6, 100, 20,
-                () -> (getMenu().getEntity().logic.isInCounterMode() ?
+                () -> (logic.isInCounterMode() ?
                         Component.translatable("screen.utilitymeters.settings.mode.counter.button")
                         : Component.translatable("screen.utilitymeters.settings.mode.prepaid.button")),
                 (b) -> {
-                    getMenu().getEntity().logic.setCounterMod(!getMenu().getEntity().logic.isInCounterMode());
-                    var packet = new RfMeterSyncPacket.Builder<>(entity.getBlockPos(), RfMeterSyncC2SPacket.class).addCounterMode(entity.logic.isInCounterMode()).build();
+                    logic.setCounterMod(!logic.isInCounterMode());
+                    var packet = new RfMeterSyncPacket.Builder<>(entity.getBlockPos(), RfMeterSyncC2SPacket.class).addCounterMode(logic.isInCounterMode()).build();
                     PacketHandler.CHANNEL.send(PacketDistributor.SERVER.noArg(), packet);
                 }
         ));
@@ -75,21 +81,21 @@ public class RfMeterSettingsScreen extends ModalScreen implements MenuAccess<RfM
         addCustomWidget(Button.builder(Component.literal("X"), this::onCloseSettings).bounds(relX + imageWidth - 20 - 10, relY + 10, 20, 20).build());
 
         addModal = new IncrementNumberModal(Component.translatable("screen.utilitymeters.modalbutton.addToPrepaidTitle"), (val) -> {
-            getMenu().getEntity().logic.addTopUp(val);
-            var packet = new RfMeterSyncPacket.Builder<>(entity.getBlockPos(), RfMeterSyncC2SPacket.class).addPrepaidValue(getMenu().getEntity().logic.getPrepaidValue()).build();
+            logic.addTopUp(val);
+            var packet = new RfMeterSyncPacket.Builder<>(entity.getBlockPos(), RfMeterSyncC2SPacket.class).addPrepaidValue(logic.getPrepaidValue()).build();
             PacketHandler.CHANNEL.send(PacketDistributor.SERVER.noArg(), packet);
         }, (val) -> {
 
         }, true);
         subtractModal = new IncrementNumberModal(Component.translatable("screen.utilitymeters.modalbutton.subFromPrepaid"), (val) -> {
-            getMenu().getEntity().logic.subTopUp(val);
-            var packet = new RfMeterSyncPacket.Builder<>(entity.getBlockPos(), RfMeterSyncC2SPacket.class).addPrepaidValue(getMenu().getEntity().logic.getPrepaidValue()).build();
+            logic.subTopUp(val);
+            var packet = new RfMeterSyncPacket.Builder<>(entity.getBlockPos(), RfMeterSyncC2SPacket.class).addPrepaidValue(logic.getPrepaidValue()).build();
             PacketHandler.CHANNEL.send(PacketDistributor.SERVER.noArg(), packet);
         }, (val) -> {
         }, false);
 
         transferLimitModal = new NumberModal(Component.translatable("screen.utilitymeters.settings.transfer_limit.title"), (val) -> {
-            getMenu().getEntity().logic.setTransferLimit((int) val);
+            logic.setTransferLimit((int) val);
             var packet = new RfMeterSyncPacket.Builder<>(entity.getBlockPos(), RfMeterSyncC2SPacket.class).addTransferLimit((int) val).build();
             PacketHandler.CHANNEL.send(PacketDistributor.SERVER.noArg(), packet);
         }, (val) -> {

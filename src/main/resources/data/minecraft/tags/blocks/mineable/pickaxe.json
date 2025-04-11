@@ -1,6 +1,8 @@
 {
   "replace": false,
   "values": [
-    "utilitymeters:rfmeter"
+    "utilitymeters:rfmeter",
+    "utilitymeters:item_meter",
+    "utilitymeters:fluid_meter"
   ]
 }

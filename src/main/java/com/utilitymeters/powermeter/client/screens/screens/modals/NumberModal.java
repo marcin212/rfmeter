@@ -1,4 +1,4 @@
-package com.utilitymeters.powermeter.client.screens;
+package com.utilitymeters.powermeter.client.screens.screens.modals;
 
 import com.utilitymeters.powermeter.client.screens.wigets.CustomTextField;
 import net.minecraft.client.gui.components.Button;

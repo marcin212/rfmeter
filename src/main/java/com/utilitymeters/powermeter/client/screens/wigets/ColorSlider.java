@@ -1,7 +1,7 @@
 package com.utilitymeters.powermeter.client.screens.wigets;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.utilitymeters.powermeter.RfMeterLogic;
+import com.utilitymeters.utils.DisplayColor;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.gui.widget.ForgeSlider;
@@ -10,19 +10,19 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class ColorSlider extends ForgeSlider {
-    Supplier<RfMeterLogic.DisplayColor> color;
+    Supplier<DisplayColor> color;
     RGB rgb;
-    Consumer<RfMeterLogic.DisplayColor> onChange;
+    Consumer<DisplayColor> onChange;
 
     public enum RGB {
         R, G, B, Contrast
     }
 
 
-    public ColorSlider(Supplier<RfMeterLogic.DisplayColor> color, RGB rgb, int x, int y, int width, int height,
+    public ColorSlider(Supplier<DisplayColor> color, RGB rgb, int x, int y, int width, int height,
                        Component prefix, Component suffix,
                        double minValue, double maxValue, double currentValue, double stepSize, int precision, boolean drawString,
-                       Consumer<RfMeterLogic.DisplayColor> onChange
+                       Consumer<DisplayColor> onChange
     ) {
         super(x, y, width, height, prefix, suffix, minValue, maxValue, currentValue, stepSize, precision, drawString);
         this.color = color;

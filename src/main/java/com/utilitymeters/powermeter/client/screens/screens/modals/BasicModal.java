@@ -1,4 +1,4 @@
-package com.utilitymeters.powermeter.client.screens;
+package com.utilitymeters.powermeter.client.screens.screens.modals;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -25,11 +25,18 @@ public abstract class BasicModal extends ModalScreen {
     Component buttonCancelText = Component.translatable("screen.utilitymeters.modalbutton.cancel");
 
 
-    protected BasicModal(Component title) {
+    BasicModal(Component title) {
         super(title);
         font = Minecraft.getInstance().font;
         titleWidth = font.width(title);
+    }
 
+    public void setButtonCancelText(Component buttonCancelText) {
+        this.buttonCancelText = buttonCancelText;
+    }
+
+    public void setButtonSaveText(Component buttonSaveText) {
+        this.buttonSaveText = buttonSaveText;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.utilitymeters.powermeter.network;
 
-import com.utilitymeters.powermeter.blockentity.RfMeterBlockEntity;
+import com.utilitymeters.powermeter.blockentity.BaseMeterBlockEntity;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -11,8 +11,8 @@ public class ClientPacketHandler {
         Level level = net.minecraft.client.Minecraft.getInstance().level;
         if (level == null) return;
         var entity = level.getBlockEntity(rfMeterSyncPacket.getPos());
-        if (entity instanceof RfMeterBlockEntity tile) {
-            tile.logic.onRfMeterSyncPacket(rfMeterSyncPacket);
+        if (entity instanceof BaseMeterBlockEntity tile) {
+            tile.onRfMeterSyncPacket(rfMeterSyncPacket);
         }
     }
 }

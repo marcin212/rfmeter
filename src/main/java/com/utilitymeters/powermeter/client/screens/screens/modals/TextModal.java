@@ -1,4 +1,4 @@
-package com.utilitymeters.powermeter.client.screens;
+package com.utilitymeters.powermeter.client.screens.screens.modals;
 
 import com.utilitymeters.powermeter.client.screens.wigets.CustomTextField;
 import net.minecraft.client.gui.components.Button;
@@ -21,7 +21,7 @@ public class TextModal extends BasicModal {
 
     boolean password;
 
-    protected TextModal(Component title, Consumer<String> onSave, Consumer<String> onCancel, Component customActionName, Consumer<String> onCustomAction, boolean password) {
+    public TextModal(Component title, Consumer<String> onSave, Consumer<String> onCancel, Component customActionName, Consumer<String> onCustomAction, boolean password) {
         super(title);
         this.onSave = onSave;
         this.onCancel = onCancel;
@@ -30,12 +30,12 @@ public class TextModal extends BasicModal {
         this.password = password;
     }
 
-    protected TextModal(Component title, Consumer<String> onSave, Consumer<String> onCancel, boolean password) {
+    public TextModal(Component title, Consumer<String> onSave, Consumer<String> onCancel, boolean password) {
         this(title, onSave, onCancel, null, null, password);
     }
 
     @Override
-    protected void init() {
+    public void init() {
         super.init();
 
         modalValue = new CustomTextField(font, startX - 120 / 2, startY, 120, 20, Component.empty(), (value) -> {

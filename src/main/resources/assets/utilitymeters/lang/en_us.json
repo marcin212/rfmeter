@@ -1,7 +1,13 @@
 {
   "itemGroup.utilitymeters": "Utility Meters",
   "block.utilitymeters.rfmeter": "RF Meter",
+  "block.utilitymeters.fluid_meter": "Fluid Meter",
+  "block.utilitymeters.item_meter": "Item Meter",
+
   "screen.utilitymeters.rfmeter": "RF Meter",
+  "screen.utilitymeters.fluid_meter": "Fluid Meter",
+  "screen.utilitymeters.item_meter": "Item Meter",
+
   "screen.utilitymeters.modalbutton.add1K": "+1K",
   "screen.utilitymeters.modalbutton.add1M": "+1M",
   "screen.utilitymeters.modalbutton.add1G": "+1G",

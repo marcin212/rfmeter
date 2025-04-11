@@ -13,8 +13,7 @@
       "from": [2.97, 1.5, 5],
       "to": [3, 7.5, 11],
       "faces": {
-
-        "west": {"uv": [12.25, 14, 14, 16], "texture": "#all", "tintindex":  -1}
+        "west": {"uv": [14.25, 14, 16, 16], "texture": "#all", "tintindex":  -1}
       }
     },
     {

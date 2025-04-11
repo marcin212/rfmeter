@@ -1,4 +1,4 @@
-package com.utilitymeters.powermeter.client.screens;
+package com.utilitymeters.powermeter.client.screens.screens.modals;
 
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
@@ -12,13 +12,13 @@ public class IncrementNumberModal extends NumberModal {
 
     boolean isAdd;
 
-    protected IncrementNumberModal(Component title, LongConsumer onSave, LongConsumer onCancel, boolean isAdd) {
+    public IncrementNumberModal(Component title, LongConsumer onSave, LongConsumer onCancel, boolean isAdd) {
         super(title, onSave, onCancel);
         this.isAdd = isAdd;
     }
 
     @Override
-    protected void init() {
+    public void init() {
         super.init();
 
         add1K = Button.builder(text1K(), this::onAdd1K)

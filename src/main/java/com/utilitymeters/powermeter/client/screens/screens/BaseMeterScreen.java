@@ -1,16 +1,15 @@
-package com.utilitymeters.powermeter.client.screens;
+package com.utilitymeters.powermeter.client.screens.screens;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.utilitymeters.powermeter.RfMeterLogic;
 import com.utilitymeters.powermeter.RfMeterMod;
+import com.utilitymeters.powermeter.client.screens.screens.modals.TextModal;
 import com.utilitymeters.powermeter.client.screens.wigets.ColorSlider;
 import com.utilitymeters.powermeter.client.screens.wigets.CustomButton;
 import com.utilitymeters.powermeter.client.screens.wigets.SegDisplay;
-import com.utilitymeters.powermeter.containers.RfMeterContainer;
+import com.utilitymeters.powermeter.containers.BaseMeterContainer;
 import com.utilitymeters.powermeter.network.PacketHandler;
 import com.utilitymeters.powermeter.network.RfMeterSyncC2SPacket;
 import com.utilitymeters.powermeter.network.RfMeterSyncPacket;
+import com.utilitymeters.utils.DisplayColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -25,13 +24,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class RfMeterScreen extends CustomScreen implements MenuAccess<RfMeterContainer> {
+public class BaseMeterScreen extends CustomScreen implements MenuAccess<BaseMeterContainer> {
     public static final ResourceLocation RFMETER_LOCATION = new ResourceLocation(RfMeterMod.MODID, "textures/gui/container/rfmeter.png");
     public static final int imageWidth = 256;
     public static final int imageHeight = 256;
     private static final Component emptyLiteral = Component.literal("");
 
-    protected final RfMeterContainer menu;
+    protected final BaseMeterContainer menu;
 
     private SegDisplay segDisplay;
 
@@ -51,7 +50,7 @@ public class RfMeterScreen extends CustomScreen implements MenuAccess<RfMeterCon
 
     private TextModal logInModal;
 
-    public RfMeterScreen(RfMeterContainer container, Inventory inventory, Component name) {
+    public BaseMeterScreen(BaseMeterContainer container, Inventory inventory, Component name) {
         super(name);
         this.menu = container;
         this.font = Minecraft.getInstance().font;
@@ -76,7 +75,7 @@ public class RfMeterScreen extends CustomScreen implements MenuAccess<RfMeterCon
     }
 
     @Override
-    public @NotNull RfMeterContainer getMenu() {
+    public @NotNull BaseMeterContainer getMenu() {
         return this.menu;
     }
 
@@ -91,7 +90,8 @@ public class RfMeterScreen extends CustomScreen implements MenuAccess<RfMeterCon
         int relY = (this.height - this.imageHeight) / 2;
 
         if (entity != null) {
-            var color = getMenu().getLogic().getColor();
+            var color = getMenu().getDisplayColor();
+            var counter = getMenu().getLogic();
 
             int height = 12;
             int space = height + 1;
@@ -107,8 +107,8 @@ public class RfMeterScreen extends CustomScreen implements MenuAccess<RfMeterCon
                     0, 100, color.contrast * 100, 1, 0, true, this::onColorChange));
 
 
-            addCustomWidget(new CustomButton(relX + 6 + 120 + 6, startYColor + 6, 100, 20, () -> (getMenu().getEntity().logic.isOn() ? Component.translatable("screen.utilitymeters.main.state.on") : Component.translatable("screen.utilitymeters.main.state.off")), (b) -> {
-                var packet = new RfMeterSyncPacket.Builder<>(entity.getBlockPos(), RfMeterSyncC2SPacket.class).addOn(!getMenu().getLogic().isOn()).build();
+            addCustomWidget(new CustomButton(relX + 6 + 120 + 6, startYColor + 6, 100, 20, () -> (counter.isOn() ? Component.translatable("screen.utilitymeters.main.state.on") : Component.translatable("screen.utilitymeters.main.state.off")), (b) -> {
+                var packet = new RfMeterSyncPacket.Builder<>(entity.getBlockPos(), RfMeterSyncC2SPacket.class).addOn(!counter.isOn()).build();
                 PacketHandler.CHANNEL.send(PacketDistributor.SERVER.noArg(), packet);
             }));
 
@@ -116,12 +116,10 @@ public class RfMeterScreen extends CustomScreen implements MenuAccess<RfMeterCon
 
 
             logInModal = new TextModal(Component.translatable("screen.utilitymeters.main.login"), (pass) -> {
-                if (getMenu().getLogic().canEdit(pass))
-                    Minecraft.getInstance().pushGuiLayer(new RfMeterSettingsScreen(getMenu(), emptyLiteral));
-            }, (pass) -> {
-
-            }, true);
-            logInModal.buttonSaveText = Component.translatable("screen.utilitymeters.modalbutton.login");
+                if (counter.canEdit(pass))
+                    Minecraft.getInstance().pushGuiLayer(new MeterSettingsScreen(getMenu(), emptyLiteral));
+            }, (pass) -> {}, true);
+            logInModal.setButtonSaveText(Component.translatable("screen.utilitymeters.modalbutton.login"));
 
             segDisplay = new SegDisplay(19, 0, false);
         }
@@ -132,15 +130,15 @@ public class RfMeterScreen extends CustomScreen implements MenuAccess<RfMeterCon
         if (logic.isProtected()) {
             logInModal.openModal();
         } else {
-            Minecraft.getInstance().pushGuiLayer(new RfMeterSettingsScreen(getMenu(), emptyLiteral));
+            Minecraft.getInstance().pushGuiLayer(new MeterSettingsScreen(getMenu(), emptyLiteral));
         }
     }
 
-    private RfMeterLogic.DisplayColor displayColor() {
-        return getMenu().getLogic().getColor();
+    private DisplayColor displayColor() {
+        return getMenu().getDisplayColor();
     }
 
-    private void onColorChange(RfMeterLogic.DisplayColor color) {
+    private void onColorChange(DisplayColor color) {
         var packet = new RfMeterSyncPacket.Builder<>(getMenu().getEntity().getBlockPos(), RfMeterSyncC2SPacket.class).
                 addColor(color.r, color.g, color.b, color.contrast).build();
         PacketHandler.CHANNEL.send(PacketDistributor.SERVER.noArg(), packet);
@@ -152,7 +150,7 @@ public class RfMeterScreen extends CustomScreen implements MenuAccess<RfMeterCon
         renderBg(pGuiGraphics, pPartialTick, pMouseX, pMouseY);
         if (Minecraft.getInstance().screen != this) return;
         super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
-        var color = getMenu().getLogic().getColor();
+        var color = displayColor();
 
         float scale = 0.3f;
         int relX = (this.width - imageWidth) / 2;
@@ -199,3 +197,4 @@ public class RfMeterScreen extends CustomScreen implements MenuAccess<RfMeterCon
         return result || resultOriginal;
     }
 }
+

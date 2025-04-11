@@ -1,7 +1,7 @@
 package com.utilitymeters.powermeter.client;
 
-import com.utilitymeters.powermeter.client.rendering.RfMeterRenderer;
-import com.utilitymeters.powermeter.client.screens.RfMeterScreen;
+import com.utilitymeters.powermeter.client.rendering.BaseMeterBlockEntityRenderer;
+import com.utilitymeters.powermeter.client.screens.screens.BaseMeterScreen;
 import com.utilitymeters.powermeter.registry.RfMeterBlockEntities;
 import com.utilitymeters.powermeter.registry.RfMeterContainers;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -18,8 +18,10 @@ public class ClientSetup {
     @SubscribeEvent
     public static void init(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
-            MenuScreens.register(RfMeterContainers.RF_METER.get(), RfMeterScreen::new);
-            BlockEntityRenderers.register(RfMeterBlockEntities.RF_METER.get(), RfMeterRenderer::new);
+            MenuScreens.register(RfMeterContainers.BASE_METER.get(), BaseMeterScreen::new);
+            BlockEntityRenderers.register(RfMeterBlockEntities.RF_METER.get(), BaseMeterBlockEntityRenderer::new);
+            BlockEntityRenderers.register(RfMeterBlockEntities.ITEM_METER.get(), BaseMeterBlockEntityRenderer::new);
+            BlockEntityRenderers.register(RfMeterBlockEntities.FLUID_METER.get(), BaseMeterBlockEntityRenderer::new);
         });
     }
 
